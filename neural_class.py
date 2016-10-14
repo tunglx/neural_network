@@ -57,29 +57,29 @@ class Layer:
 
 class NeuralNetwork:
     LEARNING_RATE = 0.1
-    def __init__(self, num_inputs, num_hidden, num_outputs, hidden_layer_weights = None, hidden_layer_bias = None, output_layer_weights = None, output_layer_bias = None):
-        self.num_inputs = num_inputs
+    def __init__(self, num_weight, num_hidden, num_outputs, hidden_layer_weights = None, hidden_layer_bias = None, output_layer_weights = None, output_layer_bias = None):
+        self.num_weight = num_weight
         self.hidden_layer = Layer(num_hidden, hidden_layer_bias)
         self.output_layer = Layer(num_hidden, output_layer_bias)
 
-        self.init_weight_from_inputs_to_hidden(hidden_layer_weights)
-        self.init_weight_from_hidden_to_output(output_layer_weights)
+        self.init_weight_for_hidden(hidden_layer_weights)
+        self.init_weight_for_output(output_layer_weights)
 
-    def init_weight_from_inputs_to_hidden(self, hidden_layer_weights):
+    def init_weight_for_hidden(self, hidden_layer_weights):
         weight_num = 0
         for h in range(len(self.hidden_layer.neuron)):
-            for i in range(self.num_inputs):
-                if not hidden_layer_weights:
+            for i in range(self.num_weight):
+                if not hidden_layer_weights or len(hidden_layer_weights) <= weight_num:
                     self.hidden_layer.neuron[h].weights.append(random.random())
                 else:
                     self.hidden_layer.neuron[h].weights.append(hidden_layer_weights[weight_num])
                 weight_num += 1
 
-    def init_weight_from_hidden_to_output(self, output_layer_weights):
+    def init_weight_for_output(self, output_layer_weights):
         weight_num = 0
         for h in range(len(self.output_layer.neuron)):
-            for i in range(len(self.hidden_layer.neuron)):
-                if not output_layer_weights:
+            for i in range(self.num_weight):
+                if not output_layer_weights or len(output_layer_weights) <= weight_num:
                     self.output_layer.neuron[h].weights.append(random.random())
                 else:
                     self.output_layer.neuron[h].weights.append(output_layer_weights[weight_num])
@@ -87,7 +87,7 @@ class NeuralNetwork:
 
     def print_out_network(self):
         print '------'
-        print 'Inputs: ', self.num_inputs
+        print 'Number of weights at each layer: ', self.num_weight
         print'------'
         print '-Hidden Layer-'
         self.hidden_layer.print_out_network()
@@ -106,5 +106,5 @@ class NeuralNetwork:
         return 0
 
 
-nn = NeuralNetwork(2, 2, 2, hidden_layer_weights=[0.15, 0.2, 0.25, 0.3], hidden_layer_bias=0.35, output_layer_weights=[0.4, 0.45, 0.5, 0.55], output_layer_bias=0.6)
+nn = NeuralNetwork(4, 2, 2, hidden_layer_weights=[0.15, 0.2, 0.7, 0.9, 0.25, 0.3], hidden_layer_bias=0.35, output_layer_weights=[0.4, 0.45, 0.5, 0.55], output_layer_bias=0.6)
 nn.print_out_network()
